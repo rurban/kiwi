@@ -1,3 +1,5 @@
+# mediawiki v?
+
 %{
 #include "bstrlib.h"
 #include "list.h"
