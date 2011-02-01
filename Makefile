@@ -1,43 +1,46 @@
+DIALECT = mw-
+# DIALECT = mw-
+# DIALECT = creole-
+SYNTAX = $(DIALECT)syntax
 EXAMPLES = syntax
 OS=$(shell uname)
 
-CFLAGS = -fPIC -O3 -g3 -Wall -std=gnu99
-all : $(EXAMPLES)
-
-syntax : .FORCE
-	mkdir -p bin
-	leg -o src/syntax.leg.c src/syntax.leg
-	$(CC) $(CFLAGS) -c src/bstrlib.c
-	$(CC) $(CFLAGS) -c src/syntax.leg.c
-	$(CC) $(CFLAGS) -c src/list.c
-	$(CC) $(CFLAGS) -c src/content.c
-	$(CC) $(CFLAGS) -c src/io.c
-	$(CC) $(CFLAGS) -c src/parse.c
-	$(CC) $(CFLAGS) -c src/stack.c
-ifeq ($(OS), Darwin)
-	$(CC) $(CFLAGS) -dynamiclib -shared -o libkiwi.so syntax.leg.o bstrlib.o list.o stack.o content.o io.o parse.o
-else
-	$(CC) $(CFLAGS) -shared -o libkiwi.so syntax.leg.o bstrlib.o list.o stack.o content.o io.o parse.o
+CFLAGS = -O3 -g3 -Wall -std=gnu99 -DDIALECT=$(DIALECT)
+ifneq ($(OS), CYGWIN_NT-6.1)
+CFLAGS += -fPIC 
 endif
-	$(CC) $(CFLAGS) -c src/main.c
-	$(CC) $(CFLAGS) -o bin/parser main.o syntax.leg.o bstrlib.o list.o stack.o content.o io.o parse.o
 
-testlist: .FORCE
-	$(CC) $(CFLAGS) -c src/bstrlib.c
-	$(CC) $(CFLAGS) -c src/list.c
-	$(CC) $(CFLAGS) -c src/testlist.c
-	$(CC) $(CFLAGS) -o bin/testlist testlist.o bstrlib.o list.o
+S   = $(SYNTAX).leg bstrlib list content io parse stack
+SRC = $(S:%=src/%.c)
+OBJ = $(SRC:src/%.c=src/%.o)
 
-memtest: .FORCE
-	$(CC) $(CFLAGS) -c src/bstrlib.c
-	$(CC) $(CFLAGS) -c src/syntax.leg.c
-	$(CC) $(CFLAGS) -c src/list.c
-	$(CC) $(CFLAGS) -c src/content.c
-	$(CC) $(CFLAGS) -c src/io.c
-	$(CC) $(CFLAGS) -c src/parse.c
-	$(CC) $(CFLAGS) -c src/memtest.c
-	$(CC) $(CFLAGS) -c src/stack.c
-	$(CC) $(CFLAGS) -o bin/memtest memtest.o syntax.leg.o bstrlib.o list.o stack.o content.o io.o parse.o
+all : $(EXAMPLES) libkiwi.so
+
+syntax : bin/$(PREFIX)parser
+
+bin/$(PREFIX)parser : $(OBJ) src/main.o
+	mkdir -p bin
+	$(CC) $(CFLAGS) -o bin/$(PREFIX)parser src/main.o $(OBJ) 
+
+src/$(SYNTAX).leg.c : src/$(SYNTAX).leg
+	leg -o src/$(SYNTAX).leg.c src/$(SYNTAX).leg
+
+libkiwi.so : $(OBJ)
+ifeq ($(OS), Darwin)
+	$(CC) $(CFLAGS) -dynamiclib -shared -o libkiwi.so $(OBJ)
+else
+	$(CC) $(CFLAGS) -shared -o libkiwi.so $(OBJ)
+endif
+
+testlist: bin/testlist 
+
+bin/testlist : src/testlist.o src/bstrlib.o src/list.o
+	$(CC) $(CFLAGS) -o bin/testlist src/testlist.o src/bstrlib.o src/list.o
+
+memtest: bin/$(DIALECT)memtest
+
+bin/$(DIALECT)memtest : $(OBJ) src/memtest.o
+	$(CC) $(CFLAGS) -o bin/$(DIALECT)memtest src/memtest.o $(OBJ)
 
 
 clean : .FORCE
