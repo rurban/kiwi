@@ -1,6 +1,10 @@
 #include "kiwi.h"
 #include "io.h"
 
+/* usage:
+ * parser base_url image_base_url < buffer
+ */
+
 int main(int argc, char **argv) {
    init();
    //file_get_contents(input, "spec/fixtures/cnn.com");
@@ -12,7 +16,7 @@ int main(int argc, char **argv) {
      set_image_base_url(argv[2]);
    }
    parse();
-   printf("%s", bdata(output_buffer));
+   puts(bdata(output_buffer));
    cleanup();
    return 0;
- }
+}
