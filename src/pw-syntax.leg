@@ -66,7 +66,7 @@ numbered = < '#'+ >                                                            {
 # Formatting
 formatting = bold_italic | bold | italic
 bold_italic = "'''''" | '**//'                                                 { append_to_tag_content("<b><i>"); }
-  ( !"'''''" wikitext )* "'''''" | ( !'**//' wikitest )* '//**'                { append_to_tag_content("</i></b>"); }
+  ( !"'''''" wikitext )* "'''''" | ( !'**//' wikitext )* '//**'                { append_to_tag_content("</i></b>"); }
 bold = "'''" | '**'                                                            { append_to_tag_content("<b>"); }
   ( !"'''" wikitext )* "'''" | ( !'**' wikitext )* '**'                        { append_to_tag_content("</b>"); }
 italic = "''" | '//'                                                           { append_to_tag_content("<i>"); }
@@ -80,12 +80,12 @@ nowiki = nowiki_open < ( !nowiki_close . )* >                                  {
   nowiki_close
 nowiki_open = nowiki_open_tag | html_pre_open | html_code_open
 nowiki_close = nowiki_close_tag | html_pre_close | html_code_close
-nowiki_open_tag = '<nowiki>' 
-nowiki_close_tag = '</nowiki>' 
-html_pre_open = ( '<pre' ( !'>' . )* '>' | '<PRE>' )                           { append_to_tag_content("<pre>"); }
-html_pre_close = ( '</pre>' | '</PRE>' )                                       { append_to_tag_content("</pre>"); }
-html_code_open = ( '<code' ( !'>' . )* '>' | '<CODE>' )                        { append_to_tag_content("<code>"); }
-html_code_close = ( '</code>' | '</CODE>' )                                    { append_to_tag_content("</code>"); }
+nowiki_open_tag = !escape '<nowiki>' 
+nowiki_close_tag = !escape '</nowiki>' 
+html_pre_open = !escape ( '<pre' ( !'>' . )* '>' | '<PRE>' )                   { append_to_tag_content("<pre>"); }
+html_pre_close = !escape ( '</pre>' | '</PRE>' )                               { append_to_tag_content("</pre>"); }
+html_code_open = !escape ( '<code' ( !'>' . )* '>' | '<CODE>' )                { append_to_tag_content("<code>"); }
+html_code_close = !escape ( '</code>' | '</CODE>' )                            { append_to_tag_content("</code>"); }
 
 # Links
 link = ( local_link | external_link )                                          { start_of_line = 0; }
@@ -107,8 +107,8 @@ link_name = < ( !']' . )+ >                                                    {
 unnamed_link = '[' !'javascript:' < ( !']' . )* > ']'                          { append_to_tag_content("<a href=\"%s\">%s</a>", yytext, yytext);}
 url = protocol '://' < ( !eol !' ' . )* >                                      { append_to_tag_content("<a href=\"%s://%s\">%s://%s</a>", protocol, yytext, protocol, yytext); }
 protocol =  < ( 'http' | 'https' | 'ftp' ) >                                   { strcpy(protocol, yytext); } 
-link_open = '[[' | '['
-link_close = ']]' | ']'
+link_open = !escape '[[' | !escape '['
+link_close = !escape ']]' | !escape ']'
 
 # Images
 image = open_image { btrunc(image_variables, 0); } file_indicator arguments? image_caption? close_image { RUN_ACTION(image_action_1); }
@@ -198,8 +198,8 @@ template_content = '|' space* < ( !template_close . )+ >                       {
 template_close = '}}'                                                          { RUN_ACTION(template_close_action_1); start_of_line = 0; }
 template_variable = < '###' ( ! '###' !eol !eof . )* '###' >                   { bprintf("%s", yytext); }
 noinclude = noinclude_open | noinclude_close
-noinclude_open = ( '<noinclude>' | '<NOINCLUDE>' )                             { template_noinclude = 1; }
-noinclude_close = ( '</noinclude>' | '</NOINCLUDE>' )                          { template_noinclude = 0; }
+noinclude_open = !escape '<noinclude>' | !escape '<NOINCLUDE>'                 { template_noinclude = 1; }
+noinclude_close = !escape '</noinclude>' | !escape '</NOINCLUDE>'              { template_noinclude = 0; }
 
 # Table of Contents
 table_of_contents = toc
@@ -207,7 +207,7 @@ toc = '<<CreateToc>>'                                                          {
 
 # HTML markup
 html = tag_open tag tag_attributes_list? tag_close
-tag_open = '<'                                                                 { init_tag_vars(); }
+tag_open = !escape '<'                                                         { init_tag_vars(); }
 tag = < '/'? ( !tag_close_nocap !space . )+ >                                  { RUN_ACTION(tag_action_1); }
 tag_attributes_list = ( space ( tag_attribute | tag_junk ) )+
 tag_attribute = tag_attribute_name '=' tag_attribute_value
