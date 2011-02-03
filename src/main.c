@@ -8,8 +8,11 @@ int main(int argc, char **argv) {
        return 0;
    }
    init();
-   //file_get_contents(input, "spec/fixtures/cnn.com");
-   stdin_get_contents(input_buffer);
+   if(argv[1] && argv[2] && (strcmp(argv[1],"-f") == 0)) {
+       file_get_contents(input_buffer, argv[2]);
+   } else {
+       stdin_get_contents(input_buffer);
+   }
    if(argc > 0) {
      set_base_url(argv[1]);
    }
@@ -17,7 +20,7 @@ int main(int argc, char **argv) {
      set_image_base_url(argv[2]);
    }
    parse();
-   puts(bdata(output_buffer));
+   puts((char *)output_buffer->data);
    cleanup();
    return 0;
 }
