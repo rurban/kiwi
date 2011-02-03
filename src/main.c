@@ -4,7 +4,7 @@
 int main(int argc, char **argv) {
    if(argv[1] && (strcmp(argv[1],"-h") == 0)) {
        puts("Usage:");
-       puts("  parser [base_url [image_base_url]] < wikitext");
+       puts("  parser [-h][-f filename] [base_url [image_base_url]] [< wikitext]");
        return 0;
    }
    init();
