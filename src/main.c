@@ -1,11 +1,12 @@
 #include "kiwi.h"
 #include "io.h"
 
-/* usage:
- * parser base_url image_base_url < buffer
- */
-
 int main(int argc, char **argv) {
+   if(argv[1] && (strcmp(argv[1],"-h") == 0)) {
+       puts("Usage:");
+       puts("  parser [base_url [image_base_url]] < wikitext");
+       return 0;
+   }
    init();
    //file_get_contents(input, "spec/fixtures/cnn.com");
    stdin_get_contents(input_buffer);
