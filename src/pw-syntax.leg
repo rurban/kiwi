@@ -1,4 +1,6 @@
-# old phpwiki 1.3 without creole support
+# phpwiki 1.3 syntax + partial creole support
+# 80% finished
+# TODO: plugins, toc args, template args, other table styles, images
 
 %{
 #include "bstrlib.h"
