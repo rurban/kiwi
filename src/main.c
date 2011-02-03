@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
      set_image_base_url(argv[2]);
    }
    parse();
-   puts((char *)output_buffer->data);
+   puts(get_output_buffer_cstr());
    cleanup();
    return 0;
 }
