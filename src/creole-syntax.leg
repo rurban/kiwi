@@ -65,12 +65,12 @@ numbered_list_entry = numbered space* list_text eol?                           {
 numbered = < '#'+ >                                                            { RUN_ACTION(numbered_action_1); start_of_line = 0; }
 
 # Formatting
-formatting = bold_italic | bold | italic
-bold_italic = '**//'                                                           { append_to_tag_content("<b><i>"); }
+formatting = bold_italic_c | bold_c | italic_c
+bold_italic_c = '**//'                                                         { append_to_tag_content("<b><i>"); }
   ( !'//**' wikitext )* '//**'                                                 { append_to_tag_content("</i></b>"); }
-bold = '**'                                                                    { append_to_tag_content("<b>"); }
+bold_c = '**'                                                                  { append_to_tag_content("<b>"); }
   ( !'**' wikitext )* '**'                                                     { append_to_tag_content("</b>"); }
-italic = '//'                                                                  { append_to_tag_content("<i>"); }
+italic_c = '//'                                                                { append_to_tag_content("<i>"); }
   ( !'//' wikitext )* '//'                                                     { append_to_tag_content("</i>"); }
 
 # pre-formatted blocks

@@ -12,12 +12,12 @@ int main(int argc, char **argv) {
        file_get_contents(input_buffer, argv[2]);
    } else {
        stdin_get_contents(input_buffer);
-   }
-   if(argc > 0) {
-     set_base_url(argv[1]);
-   }
-   if(argc > 1) {
-     set_image_base_url(argv[2]);
+       if(argc > 0) {
+           set_base_url(argv[1]);
+       }
+       if(argc > 1) {
+           set_image_base_url(argv[2]);
+       }
    }
    parse();
    puts(get_output_buffer_cstr());

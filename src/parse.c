@@ -64,7 +64,8 @@ KIWI_ACTION(heading_action_2) {
   bstring tmp = bstrcpy(tag_content);
   strip_html_markup(tmp);
   urlencode(tmp);
-  bprintf("<span class=\"editsection\">[<a href=\"edit\">edit</a>]</span><span class=\"mw-headline\" id=\"%s\">", bdata(tmp));
+  bprintf("<span class=\"editsection\">[<a href=\"edit\">edit</a>]</span><span class=\"mw-headline\" id=\"%s\">", 
+          bdata(tmp));
   bdestroy(tmp);
   
   bprintf("%s</span>", bdata(tag_content));
